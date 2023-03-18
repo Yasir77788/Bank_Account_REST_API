@@ -28,7 +28,7 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint: /")
 }
 
-// We want our app to return the accounts in the dataset in a JSON format.
+// the app to return the accounts in the dataset in a JSON format.
 // Create returnAllAccounts to handle this process.
 // use the Encode function to convert the Account into a json object
 func returnAllAccounts(w http.ResponseWriter, r *http.Request) {
