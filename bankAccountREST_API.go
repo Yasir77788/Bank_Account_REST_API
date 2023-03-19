@@ -9,6 +9,10 @@ import (
 	"fmt"
 	"log"      // implement logging capabilities for the API such as logging errors in requests
 	"net/http" // allow us to receive, parse and send http requests
+
+	"github.com/gorilla/mux" // Gorilla Mux package implements a request router and dispatcher that
+	// matches incoming requests to their respective handler.
+	// Also, it parses data sent through HTTP requests.
 )
 
 type Account struct {
@@ -39,9 +43,16 @@ func returnAllAccounts(w http.ResponseWriter, r *http.Request) {
 // This function returns homepage or returnAllAccounts, based on the URL provided with the request.
 // reach the API at the address http://localhost:10000 while the program is running
 func handleRequests() {
-	http.HandleFunc("/", homePage)
-	http.HandleFunc("/accounts", returnAllAccounts)
-	log.Fatal(http.ListenAndServe(":10000", nil))
+	// create a router to handle our requests from the mux package.
+	// StrictSlash defines the trailing slash behavior for new routes. The initial value is false.
+	// When true, if the route path is "/path/", accessing "/path" will perform a redirect to the former and vice versa. Ess
+	// this guarantees that the application will always see the path as specified in the route.
+	// use the new router variable to handle calls to the API, rather than using the built-in http package.
+	// use the mux router as a custom handler for the ListenAndServe function
+	router := mux.NewRouter().StrictSlash(true)
+	router.HandleFunc("/", homePage)
+	router.HandleFunc("/accounts", returnAllAccounts)
+	log.Fatal(http.ListenAndServe(":10000", router))
 }
 
 // Add data
