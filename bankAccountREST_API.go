@@ -71,6 +71,23 @@ func createAccount(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(account)
 }
 
+// global function deleteAccount to delete a record
+func deleteAccount(w http.ResponseWriter, r *http.Request) {
+	// use mux to parse the path parameters
+	vars := mux.Vars(r)
+	// extract the account number of the account we wish to delete
+	id := vars["number"]
+	// loop through dataset
+	for index, account := range Accounts {
+		// if the id path parameter matches one of the
+		// account numbers
+		if account.Number == id {
+			// updates the dataset to remove the account
+			Accounts = append(Accounts[:index], Accounts[index+1:]...)
+		}
+	}
+}
+
 // To handle the HTTP requests. use a handleRequests function
 // This function returns homepage or returnAllAccounts, based on the URL provided with the request.
 // reach the API at the address http://localhost:10000 while the program is running
@@ -89,6 +106,7 @@ func handleRequests() {
 	router.HandleFunc("/account", createAccount).Methods("POST")
 	// the API will be accessible http://localhost:10000/
 	// add the router as a handler in the ListenAndServe function
+	router.HandleFunc("/account/{number}", deleteAccount).Methods("DELETE")
 	log.Fatal(http.ListenAndServe(":10000", router))
 }
 
