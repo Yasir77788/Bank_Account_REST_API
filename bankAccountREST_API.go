@@ -1,5 +1,5 @@
 // Yasir Hassan
-// Bank Account REST API - CRUD Operations 
+// Bank Account REST API - CRUD Operations
 // Written in GoLang programming language
 package main
 
@@ -39,6 +39,22 @@ func returnAllAccounts(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(Accounts)
 }
 
+// global function to return an account
+// Access the variables sent in the request from the mux router.
+// Access the account number value that was sent by the HTTP request.
+// The convention here is that the parameter’s name is number.
+// Iterate through the dataset and when we find the account with the corresponding account number,
+// encode the account in JSON format and write the data to the HTTPWriter w.
+func returnAccount(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	key := vars["number"]
+	for _, account := range Accounts {
+		if account.Number == key {
+			json.NewEncoder(w).Encode(account)
+		}
+	}
+}
+
 // To handle the HTTP requests. use a handleRequests function
 // This function returns homepage or returnAllAccounts, based on the URL provided with the request.
 // reach the API at the address http://localhost:10000 while the program is running
@@ -52,11 +68,13 @@ func handleRequests() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", homePage)
 	router.HandleFunc("/accounts", returnAllAccounts)
+	router.HandleFunc("/account/{number}", returnAccount) // Use mux to reference specific parts of a record.
 	log.Fatal(http.ListenAndServe(":10000", router))
 }
 
 // Add data
-// In the main function, create fictional data for the Accounts dataset and execute the handleRequest function.
+// In the main function, create fictional data for the Accounts dataset
+// and execute the handleRequest function.
 func main() {
 	// initialize the dataset
 	Accounts = []Account{
